@@ -236,81 +236,6 @@ def plot_accuracy_graph(file_path):
     plt.show()
 
 
-def plot_labeled_size_graph(file_path):
-    """
-    Generates and saves a graph plotting Labeled Size vs. Cycle for different
-    active learning methods.
-    """
-    if not os.path.exists(file_path):
-        print(f"Error: The file {file_path} does not exist.")
-        return
-
-    try:
-        with open(file_path, 'r') as f:
-            data = json.load(f)
-    except json.JSONDecodeError:
-        print(f"Error: Failed to decode JSON from {file_path}.")
-        return
-
-    plt.style.use('seaborn-v0_8-whitegrid')
-    plt.figure(figsize=(5, 6))
-
-    # Define styles for each approach
-    styles = {
-        'learning_loss': {'color': 'red', 'linestyle': '-', 'marker': 'o', 'label': 'Learning Loss'},
-        # 'learning_loss_95': {'color': 'cyan', 'linestyle': '-', 'marker': 'o', 'label': 'Learning Loss (95%)'},
-        # 'learning_loss_80': {'color': 'purple', 'linestyle': '-', 'marker': 'o', 'label': 'Learning Loss (80%)'},
-        'dqn': {'color': 'blue', 'linestyle': '-', 'marker': 's', 'label': 'DQN'},
-        'userwise_dqn': {'color': 'cyan', 'linestyle': '-', 'marker': 'o', 'label': 'DQN (User-wise)'},
-        # 'dqn_dla': {'color': 'green', 'linestyle': '-', 'marker': '^', 'label': 'DQN (DLA)'},
-        'non_dqn': {'color': 'orange', 'linestyle': '-', 'marker': 'D', 'label': 'Non-DQN'},
-        'userwise_non_dqn': {'color': 'purple', 'linestyle': '-', 'marker': 'o', 'label': 'Non-DQN (User-wise)'},
-    }
-
-    for approach, results in data.items():
-        if approach not in styles:
-            print(f"Warning: No style defined for '{approach}'. Skipping this data.")
-            continue
-
-        if not results['labeled_sizes']:
-            print(f"No data to plot for {approach}.")
-            continue
-
-        # Convert to numpy arrays for easier math
-        labeled_sizes = np.array(results['labeled_sizes'])
-        mean_labeled = np.mean(labeled_sizes, axis=0)
-        std_labeled = np.std(labeled_sizes, axis=0)
-        upper_bound = mean_labeled + std_labeled
-        lower_bound = mean_labeled - std_labeled
-        cycles = np.arange(1, len(mean_labeled) + 1)
-
-        style = styles[approach]
-
-        # Plot mean labeled size
-        plt.plot(cycles, mean_labeled, **style, linewidth=2, markersize=3)
-        # plt.plot(cycles, upper_bound, linestyle=':', color=style['color'], label=f"{style['label'].split(' ')[0]} mean±std")
-        # plt.plot(cycles, lower_bound, linestyle=':', color=style['color'], label='_nolegend_')
-
-    plt.xlabel('Active Learning Cycle', fontsize=12, fontweight='bold')
-    plt.ylabel('Number of Labeled Images', fontsize=12, fontweight='bold')
-    plt.title('Labeled Dataset Size Over Cycles', fontsize=14, fontweight='bold')
-    plt.grid(True, linestyle='--', alpha=0.6)
-
-    plt.xticks(cycles, fontsize=11)
-    # Use the first approach's labeled sizes for consistent x-axis ticks
-    if 'learning_loss' in data and data['learning_loss']['labeled_sizes'][0]:
-        labeled_labels = [f'{size // 1000}K' for size in data['learning_loss']['labeled_sizes'][0]]
-        plt.yticks(data['learning_loss']['labeled_sizes'][0], labeled_labels, fontsize=11)
-
-    plt.legend(loc='upper left', frameon=True, edgecolor='black', fontsize=8)
-    plt.tight_layout()
-
-    plot_filename = args.save_path + args.dataset + '/labeled_size_vs_cycle.png'
-    plt.savefig(plot_filename, dpi=300)
-    print(f"Graph saved as {plot_filename}")
-    plt.show()
-
-
 def save_results(results, filename, optim_name, model_name):
     """
     Saves results to a JSON file, updating accuracies and labeled sizes
@@ -380,15 +305,11 @@ if __name__ == '__main__':
             # 'resnet18': {'label': 'ResNet18', 'labeled_sizes': [], 'accuracies': []},
             # 'resnet34': {'label': 'ResNet34', 'labeled_sizes': [], 'accuracies': []},
             'resnet50': {'label': 'ResNet50', 'labeled_sizes': [], 'accuracies': []},
-            'resnet101': {'label': 'ResNet101', 'labeled_sizes': [], 'accuracies': []},
-            'resnet152': {'label': 'ResNet152', 'labeled_sizes': [], 'accuracies': []}
         },
         # 'adam': {
         #     'resnet18': {'label': 'ResNet18', 'labeled_sizes': [], 'accuracies': []},
         #     'resnet34': {'label': 'ResNet34', 'labeled_sizes': [], 'accuracies': []},
         #     'resnet50': {'label': 'ResNet50', 'labeled_sizes': [], 'accuracies': []},
-        #     'resnet101': {'label': 'ResNet101', 'labeled_sizes': [], 'accuracies': []},
-        #     'resnet152': {'label': 'ResNet152', 'labeled_sizes': [], 'accuracies': []}
         # }
     }
 
@@ -401,8 +322,6 @@ if __name__ == '__main__':
         'resnet18': resnet.ResNet18(num_classes=args.nClass).to(args.device),
         'resnet34': resnet.ResNet34(num_classes=args.nClass).to(args.device),
         'resnet50': resnet.ResNet50(num_classes=args.nClass).to(args.device),
-        'resnet101': resnet.ResNet101(num_classes=args.nClass).to(args.device),
-        'resnet152': resnet.ResNet152(num_classes=args.nClass).to(args.device),
     }
 
     for optim_name, models_data in ALL_RESULTS.items():
@@ -425,7 +344,7 @@ if __name__ == '__main__':
                 }
 
                 model = MODEL_MAP[model_name]
-                loss_module = lossnet.LossNet().to(args.device)
+                loss_module = lossnet.LossNet(model=model_name).to(args.device)
                 models = {'backbone': model, 'module': loss_module}
                 torch.backends.cudnn.benchmark = False
 
@@ -473,7 +392,5 @@ if __name__ == '__main__':
                 # Save only the learning_loss results after its trials are complete
                 save_results(ALL_RESULTS, output_filename, optim_name, model_name)
 
-    # print(ALL_RESULTS)
     # Plot the graph using the saved data
-    # plot_accuracy_graph(output_filename)
-    # plot_labeled_size_graph(output_filename)
+    # plot_accuracy_vs_labeled_size(output_filename)
