@@ -294,6 +294,12 @@ if __name__ == '__main__':
     # Set the final output filename path
     output_filename = os.path.join(dataset_save_path, 'results.json')
 
+    path = 'weights/'
+    model_save_path = os.path.join(path, args.dataset)
+    if not os.path.exists(model_save_path):
+        os.makedirs(model_save_path)
+        print(f"Created dataset results directory: {model_save_path}")
+
     args.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     loader_args = {'batch_size': args.batch_size, 'pin_memory': True}
@@ -301,16 +307,16 @@ if __name__ == '__main__':
     rng = random.Random(42)
 
     ALL_RESULTS = {
-        'sgd': {
-            # 'resnet18': {'label': 'ResNet18', 'labeled_sizes': [], 'accuracies': []},
-            # 'resnet34': {'label': 'ResNet34', 'labeled_sizes': [], 'accuracies': []},
-            'resnet50': {'label': 'ResNet50', 'labeled_sizes': [], 'accuracies': []},
-        },
-        # 'adam': {
-        #     'resnet18': {'label': 'ResNet18', 'labeled_sizes': [], 'accuracies': []},
+       #  'sgd': {
+       #      # 'resnet18': {'label': 'ResNet18', 'labeled_sizes': [], 'accuracies': []},
+       #      # 'resnet34': {'label': 'ResNet34', 'labeled_sizes': [], 'accuracies': []},
+       #      'resnet50': {'label': 'ResNet50', 'labeled_sizes': [], 'accuracies': []},
+       #  },
+         'adam': {
+             'resnet18': {'label': 'ResNet18', 'labeled_sizes': [], 'accuracies': []},
         #     'resnet34': {'label': 'ResNet34', 'labeled_sizes': [], 'accuracies': []},
         #     'resnet50': {'label': 'ResNet50', 'labeled_sizes': [], 'accuracies': []},
-        # }
+         }
     }
 
     OPTIMIZER_MAP = {
@@ -328,9 +334,22 @@ if __name__ == '__main__':
         OptimizerClass = OPTIMIZER_MAP[optim_name]  # Get the actual optimizer class
 
         for model_name, results_data in models_data.items():
+            model_save_path = os.path.join(model_save_path, model_name + '/')
+            if not os.path.exists(model_save_path):
+                os.makedirs(model_save_path)
+                print(f"Created dataset results directory: {model_save_path}")
+            model_save_path = os.path.join(model_save_path, optim_name + '/')
+            if not os.path.exists(model_save_path):
+                os.makedirs(model_save_path)
+                print(f"Created dataset results directory: {model_save_path}")
             for trial in range(args.num_trial):
                 print(
                     f"\n--- Running {results_data['label']} (Optimizer: {optim_name}, Model: {model_name}) Approach (Trial {trial + 1}/{args.num_trial}) ---")
+                model_save_path = os.path.join(model_save_path, str(trial + 1) + '/')
+                if not os.path.exists(model_save_path):
+                    os.makedirs(model_save_path)
+                    print(f"Created dataset results directory: {model_save_path}")
+
                 indices = list(range(args.nTrain))
                 rng.shuffle(indices)
                 labeled_set = indices[:args.addednum]
@@ -350,6 +369,10 @@ if __name__ == '__main__':
 
                 for cycle in range(args.cycles):
                     print('Training Set', len(labeled_set))
+                    model_save_path = os.path.join(model_save_path, str(cycle + 1) + '/')
+                    if not os.path.exists(model_save_path):
+                        os.makedirs(model_save_path)
+                        print(f"Created dataset results directory: {model_save_path}")
 
                     criterion = nn.CrossEntropyLoss(reduction='none')
 
@@ -370,6 +393,7 @@ if __name__ == '__main__':
                     schedulers = {'backbone': sched_backbone, 'module': sched_module}
 
                     train(models, criterion, optimizers, schedulers, dataloaders, args.num_epoch, args.epoch_loss)
+                    torch.save(model.state_dict(), model_save_path+'model_weights.pth')
                     acc = test(models, dataloaders, mode='test')
                     print(f'Trial {trial + 1}/{args.num_trial} || Cycle {cycle + 1}/{args.cycles} || Labelled Data {len(labeled_set)}: Test Accuracy {acc:.2f}%')
 
