@@ -313,8 +313,8 @@ if __name__ == '__main__':
        #       'resnet50': {'label': 'ResNet50', 'labeled_sizes': [], 'accuracies': []},
        #  },
          'adam': {
-        #     'resnet18': {'label': 'ResNet18', 'labeled_sizes': [], 'accuracies': []},
-              'resnet34': {'label': 'ResNet34', 'labeled_sizes': [], 'accuracies': []},
+              'resnet18': {'label': 'ResNet18', 'labeled_sizes': [], 'accuracies': []},
+        #     'resnet34': {'label': 'ResNet34', 'labeled_sizes': [], 'accuracies': []},
         #     'resnet50': {'label': 'ResNet50', 'labeled_sizes': [], 'accuracies': []},
          },
         # 'adamw': {
@@ -346,21 +346,21 @@ if __name__ == '__main__':
         OptimizerClass = OPTIMIZER_MAP[optim_name]  # Get the actual optimizer class
 
         for model_name, results_data in models_data.items():
-            model_save_path = os.path.join(model_save_path, model_name + '/')
-            if not os.path.exists(model_save_path):
-                os.makedirs(model_save_path)
-                print(f"Created dataset results directory: {model_save_path}")
-            model_save_path = os.path.join(model_save_path, optim_name + '/')
-            if not os.path.exists(model_save_path):
-                os.makedirs(model_save_path)
-                print(f"Created dataset results directory: {model_save_path}")
+            model_path = os.path.join(model_save_path, model_name + '/')
+            if not os.path.exists(model_path):
+                os.makedirs(model_path)
+                print(f"Created dataset results directory: {model_path}")
+            optime_path = os.path.join(model_path, optim_name + '/')
+            if not os.path.exists(optime_path):
+                os.makedirs(optime_path)
+                print(f"Created dataset results directory: {optime_path}")
             for trial in range(args.num_trial):
                 print(
                     f"\n--- Running {results_data['label']} (Optimizer: {optim_name}, Model: {model_name}) Approach (Trial {trial + 1}/{args.num_trial}) ---")
-                model_save_path = os.path.join(model_save_path, str(trial + 1) + '/')
-                if not os.path.exists(model_save_path):
-                    os.makedirs(model_save_path)
-                    print(f"Created dataset results directory: {model_save_path}")
+                trial_path = model_save_path + 't'+str(trial + 1) + '/'
+                if not os.path.exists(trial_path):
+                    os.makedirs(trial_path)
+                    print(f"Created dataset results directory: {trial_path}")
 
                 indices = list(range(args.nTrain))
                 rng.shuffle(indices)
@@ -381,10 +381,10 @@ if __name__ == '__main__':
 
                 for cycle in range(args.cycles):
                     print('Training Set', len(labeled_set))
-                    model_save_path = os.path.join(model_save_path, str(cycle + 1) + '/')
-                    if not os.path.exists(model_save_path):
-                        os.makedirs(model_save_path)
-                        print(f"Created dataset results directory: {model_save_path}")
+                    cycle_path = trial_path + 'c' + str(cycle + 1) + '/'
+                    if not os.path.exists(cycle_path):
+                        os.makedirs(cycle_path)
+                        print(f"Created dataset results directory: {cycle_path}")
 
                     criterion = nn.CrossEntropyLoss(reduction='none')
 
@@ -405,7 +405,7 @@ if __name__ == '__main__':
                     schedulers = {'backbone': sched_backbone, 'module': sched_module}
 
                     train(models, criterion, optimizers, schedulers, dataloaders, args.num_epoch, args.epoch_loss)
-                    torch.save(model.state_dict(), model_save_path+'model_weights.pth')
+                    torch.save(model.state_dict(), cycle_path+'model_weights.pth')
                     acc = test(models, dataloaders, mode='test')
                     print(f'Trial {trial + 1}/{args.num_trial} || Cycle {cycle + 1}/{args.cycles} || Labelled Data {len(labeled_set)}: Test Accuracy {acc:.2f}%')
 
