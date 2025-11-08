@@ -353,7 +353,7 @@ if __name__ == '__main__':
             optim_path = os.path.join(model_path, optim_name + '/')
             if not os.path.exists(optim_path):
                 os.makedirs(optim_path)
-                print(f"Created dataset results directory: {optime_path}")
+                print(f"Created dataset results directory: {optim_path}")
             for trial in range(args.num_trial):
                 print(
                     f"\n--- Running {results_data['label']} (Optimizer: {optim_name}, Model: {model_name}) Approach (Trial {trial + 1}/{args.num_trial}) ---")
