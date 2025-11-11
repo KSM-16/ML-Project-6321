@@ -312,11 +312,11 @@ if __name__ == '__main__':
        #       'resnet34': {'label': 'ResNet34', 'labeled_sizes': [], 'accuracies': []},
        #       'resnet50': {'label': 'ResNet50', 'labeled_sizes': [], 'accuracies': []},
        #  },
-          'adam': {
+        #  'adam': {
        #        'resnet18': {'label': 'ResNet18', 'labeled_sizes': [], 'accuracies': []},
-              'resnet34': {'label': 'ResNet34', 'labeled_sizes': [], 'accuracies': []},
+        #      'resnet34': {'label': 'ResNet34', 'labeled_sizes': [], 'accuracies': []},
         #     'resnet50': {'label': 'ResNet50', 'labeled_sizes': [], 'accuracies': []},
-         },
+        # },
         #  'adamw': {
          #         'resnet18': {'label': 'ResNet18', 'labeled_sizes': [], 'accuracies': []},
          #          'resnet34': {'label': 'ResNet34', 'labeled_sizes': [], 'accuracies': []},
@@ -324,7 +324,7 @@ if __name__ == '__main__':
          # },
          'rmsprop': {
                   'resnet18': {'label': 'ResNet18', 'labeled_sizes': [], 'accuracies': []},
-        #          'resnet34': {'label': 'ResNet34', 'labeled_sizes': [], 'accuracies': []},
+                  'resnet34': {'label': 'ResNet34', 'labeled_sizes': [], 'accuracies': []},
         #         'resnet50': {'label': 'ResNet50', 'labeled_sizes': [], 'accuracies': []},
          }
     }
