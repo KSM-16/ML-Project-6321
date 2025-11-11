@@ -405,9 +405,9 @@ if __name__ == '__main__':
                                                        weight_decay=args.wdecay)
                     elif optim_name == 'rmsprop':
                         optim_backbone = OptimizerClass(models['backbone'].parameters(), lr=0.0001, eps = 1e-08,
-                                                        alpha=0.995, momentum=0.9, weight_decay=0.0001)
+                                                        alpha=0.99, momentum=0.9, weight_decay=0.0001)
                         optim_module = OptimizerClass(models['module'].parameters(), lr=0.0001, eps = 1e-08,
-                                                      alpha=0.995, momentum=0.9, weight_decay=0.0001)
+                                                      alpha=0.99, momentum=0.9, weight_decay=0.0001)
 
                     sched_backbone = lr_scheduler.MultiStepLR(optim_backbone, milestones=args.milestones)
                     sched_module = lr_scheduler.MultiStepLR(optim_module, milestones=args.milestones)
