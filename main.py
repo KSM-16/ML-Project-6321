@@ -394,20 +394,20 @@ if __name__ == '__main__':
                         optim_module = OptimizerClass(models['module'].parameters(), lr=args.lr, momentum=args.momentum,
                                                  weight_decay=args.wdecay)
                     elif optim_name == 'adam':
-                        optim_backbone = OptimizerClass(models['backbone'].parameters(), lr=args.lr,
-                                                        betas=(0.9, 0.999), weight_decay=args.wdecay)
-                        optim_module = OptimizerClass(models['module'].parameters(), lr=args.lr,
-                                                      betas=(0.9, 0.999), weight_decay=args.wdecay)
+                        optim_backbone = OptimizerClass(models['backbone'].parameters(), lr=0.001,
+                                                        betas=(0.9, 0.999), eps=1e-08, weight_decay=0)
+                        optim_module = OptimizerClass(models['module'].parameters(), lr=0.001,
+                                                        betas=(0.9, 0.999), eps=1e-08, weight_decay=0)
                     elif optim_name == 'adamw':
                         optim_backbone = OptimizerClass(models['backbone'].parameters(), lr=args.lr,
                                                         weight_decay=args.wdecay)
                         optim_module = OptimizerClass(models['module'].parameters(), lr=args.lr,
                                                        weight_decay=args.wdecay)
                     elif optim_name == 'rmsprop':
-                        optim_backbone = OptimizerClass(models['backbone'].parameters(), lr=args.lr,
-                                                        alpha=0.99, momentum=0.9, weight_decay=args.wdecay)
-                        optim_module = OptimizerClass(models['module'].parameters(), lr=args.lr,
-                                                      alpha=0.99, momentum=0.9, weight_decay=args.wdecay)
+                        optim_backbone = OptimizerClass(models['backbone'].parameters(), lr=0.01,
+                                                        alpha=0.99, eps = 1e-08, weight_decay=0)
+                        optim_module = OptimizerClass(models['module'].parameters(), lr=0.01,
+                                                      alpha=0.99, eps = 1e-08, weight_decay=0)
 
                     sched_backbone = lr_scheduler.MultiStepLR(optim_backbone, milestones=args.milestones)
                     sched_module = lr_scheduler.MultiStepLR(optim_module, milestones=args.milestones)
