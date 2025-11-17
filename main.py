@@ -399,9 +399,9 @@ if __name__ == '__main__':
                         optim_module = OptimizerClass(models['module'].parameters(), lr=0.0001,
                                                         betas=(0.9, 0.999), eps=1e-08, weight_decay=0.0001)
                     elif optim_name == 'adamw':
-                        optim_backbone = OptimizerClass(models['backbone'].parameters(), lr=args.lr,
+                        optim_backbone = OptimizerClass(models['backbone'].parameters(), lr=0.0001,
                                                         weight_decay=args.wdecay)
-                        optim_module = OptimizerClass(models['module'].parameters(), lr=args.lr,
+                        optim_module = OptimizerClass(models['module'].parameters(), lr=0.0001,
                                                        weight_decay=args.wdecay)
                     elif optim_name == 'rmsprop':
                         optim_backbone = OptimizerClass(models['backbone'].parameters(), lr=0.0001, eps = 1e-08,
