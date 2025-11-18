@@ -317,16 +317,16 @@ if __name__ == '__main__':
           #    'resnet34': {'label': 'ResNet34', 'labeled_sizes': [], 'accuracies': []},
           #     'resnet50': {'label': 'ResNet50', 'labeled_sizes': [], 'accuracies': []},
        #  },
-          'adamw': {
+         # 'adamw': {
          #        'resnet18': {'label': 'ResNet18', 'labeled_sizes': [], 'accuracies': []},
          #        'resnet34': {'label': 'ResNet34', 'labeled_sizes': [], 'accuracies': []},
-                   'resnet50': {'label': 'ResNet50', 'labeled_sizes': [], 'accuracies': []},
-          },
-        # 'rmsprop': {
+         #          'resnet50': {'label': 'ResNet50', 'labeled_sizes': [], 'accuracies': []},
+         # },
+         'rmsprop': {
          #         'resnet18': {'label': 'ResNet18', 'labeled_sizes': [], 'accuracies': []},
           #        'resnet34': {'label': 'ResNet34', 'labeled_sizes': [], 'accuracies': []},
-          #      'resnet50': {'label': 'ResNet50', 'labeled_sizes': [], 'accuracies': []},
-      #   }
+                   'resnet50': {'label': 'ResNet50', 'labeled_sizes': [], 'accuracies': []},
+         }
     }
 
     OPTIMIZER_MAP = {
