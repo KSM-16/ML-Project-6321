@@ -490,8 +490,8 @@ def plot_accuracy_vs_labeled_size(file_path):
         for optimizer in optimizers:
             # Check if the optimizer column exists for the current model
             if optimizer in df.columns and model in df.index:
-                plt.plot(processed_data[model][optimizer][labeled_sizes],
-                         processed_data[model][optimizer][average_accuracies],
+                plt.plot(processed_data[model][optimizer]['labeled_sizes'],
+                         processed_data[model][optimizer]['average_accuracies'],
                          marker='o', label=optimizer.upper())
         plt.title(
             f'{model.replace("resnet", "ResNet-")} Average Accuracy vs. Labeled Data Size for Different Optimizers')
