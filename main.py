@@ -434,30 +434,8 @@ def train_model(dataset, args, output_filename):
 # to-do
 
 
-def generate_avg_accuracy(file_path):
-    if not os.path.exists(file_path):
-        print(f"Error: The file {file_path} does not exist.")
-        return
-    try:
-        with open(file_path, 'r') as f:
-            data = json.load(f)
-    except json.JSONDecodeError:
-        print(f"Error: Failed to decode JSON from {file_path}.")
-        return
-
-    reformatted_data_for_df = {}
-    for optimizer_name, models_data in data.items():
-        for model_name, data_content in models_data.items():
-            if model_name not in reformatted_data_for_df:
-                reformatted_data_for_df[model_name] = {}
-            reformatted_data_for_df[model_name][optimizer_name] = data_content
-
-    # create the DataFrame from this reformatted dictionary
-    df = pd.DataFrame.from_dict(reformatted_data_for_df, orient='index')
-
+def generate_avg_accuracy(df, models, optimizers):
     processed_data = {}
-    models = ['resnet18', 'resnet34', 'resnet50']
-    optimizers = ['sgd', 'adam', 'adamw', 'rmsprop']
     for model in models:
         processed_data[model] = {}
         for optimizer in optimizers:
@@ -484,9 +462,28 @@ def generate_avg_accuracy(file_path):
 
 
 def plot_accuracy_vs_labeled_size(file_path):
-    processed_data = generate_avg_accuracy(file_path)
+    if not os.path.exists(file_path):
+        print(f"Error: The file {file_path} does not exist.")
+        return
+    try:
+        with open(file_path, 'r') as f:
+            data = json.load(f)
+    except json.JSONDecodeError:
+        print(f"Error: Failed to decode JSON from {file_path}.")
+        return
+
+    reformatted_data_for_df = {}
+    for optimizer_name, models_data in data.items():
+        for model_name, data_content in models_data.items():
+            if model_name not in reformatted_data_for_df:
+                reformatted_data_for_df[model_name] = {}
+            reformatted_data_for_df[model_name][optimizer_name] = data_content
+
+    # create the DataFrame from this reformatted dictionary
+    df = pd.DataFrame.from_dict(reformatted_data_for_df, orient='index')
     models = ['resnet18', 'resnet34', 'resnet50']
     optimizers = ['sgd', 'adam', 'adamw', 'rmsprop']
+    processed_data = generate_avg_accuracy(df, models, optimizers)
     for model in models:
         processed_data[model] = {}
         plt.figure(figsize=(12, 7))
