@@ -458,7 +458,37 @@ def generate_avg_accuracy(df, models, optimizers):
             else:
                 print(
                     f"Warning: Data for model '{model}' with optimizer '{optimizer}' not found in the DataFrame. Skipping.")
+
     return processed_data
+
+def plot_all_graph(models, optimizers, processed_data):
+    for model in models:
+        for optimizer_name in optimizers:
+            if optimizer_name in processed_data[model]:
+                labeled_sizes = processed_data[model][optimizer_name]['labeled_sizes']
+                average_accuracies = processed_data[model][optimizer_name]['average_accuracies']
+                plt.plot(labeled_sizes, average_accuracies, marker='.',
+                         label=f'{model.replace("resnet", "ResNet-")} - {optimizer_name.upper()}')
+
+    plt.title('Average Accuracy vs. Labeled Data Size for All Models and Optimizers')
+    plt.xlabel('Labeled Data Size')
+    plt.ylabel('Average Accuracy')
+    plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+    plot_filename = os.path.join('plots', 'all_comparison.png')
+    plt.savefig(plot_filename, dpi=300)
+    plt.close()
+
+def format_data(data):
+    reformatted_data_for_df = {}
+    for optimizer_name, models_data in data.items():
+        for model_name, data_content in models_data.items():
+            if model_name not in reformatted_data_for_df:
+                reformatted_data_for_df[model_name] = {}
+            reformatted_data_for_df[model_name][optimizer_name] = data_content
+    return pd.DataFrame.from_dict(reformatted_data_for_df, orient='index')
 
 
 def plot_accuracy_vs_labeled_size(file_path):
@@ -471,25 +501,15 @@ def plot_accuracy_vs_labeled_size(file_path):
     except json.JSONDecodeError:
         print(f"Error: Failed to decode JSON from {file_path}.")
         return
-
-    reformatted_data_for_df = {}
-    for optimizer_name, models_data in data.items():
-        for model_name, data_content in models_data.items():
-            if model_name not in reformatted_data_for_df:
-                reformatted_data_for_df[model_name] = {}
-            reformatted_data_for_df[model_name][optimizer_name] = data_content
-
-    # create the DataFrame from this reformatted dictionary
-    df = pd.DataFrame.from_dict(reformatted_data_for_df, orient='index')
+    
+    df = format_data(data)
     models = ['resnet18', 'resnet34', 'resnet50']
     optimizers = ['sgd', 'adam', 'adamw', 'rmsprop']
     processed_data = generate_avg_accuracy(df, models, optimizers)
     for model in models:
-        processed_data[model] = {}
         plt.figure(figsize=(12, 7))
         for optimizer in optimizers:
-            # Check if the optimizer column exists for the current model
-            if optimizer in df.columns and model in df.index:
+            if optimizer in df.columns and model in df.index and optimizer in processed_data[model]:
                 plt.plot(processed_data[model][optimizer]['labeled_sizes'],
                          processed_data[model][optimizer]['average_accuracies'],
                          marker='o', label=optimizer.upper())
@@ -497,12 +517,15 @@ def plot_accuracy_vs_labeled_size(file_path):
             f'{model.replace("resnet", "ResNet-")} Average Accuracy vs. Labeled Data Size for Different Optimizers')
         plt.xlabel('Labeled Data Size')
         plt.ylabel('Average Accuracy')
-        plt.legend()
+        plt.legend(loc='upper left')
         plt.grid(True)
+        plt.ylim(65, 95)
         plt.show()
+        os.makedirs('plots', exist_ok=True)
         plot_filename = os.path.join('plots', model + '_comparison.png')
         plt.savefig(plot_filename, dpi=300)
         plt.close()
+    plot_all_graph(models, optimizers, processed_data)
 
 
 if __name__ == '__main__':
