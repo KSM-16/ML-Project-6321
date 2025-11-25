@@ -297,23 +297,23 @@ def train_model(dataset, args, output_filename):
         'sgd': {
             'resnet18': {'label': 'ResNet18', 'labeled_sizes': [], 'accuracies': []},
             'resnet34': {'label': 'ResNet34', 'labeled_sizes': [], 'accuracies': []},
-            #   'resnet50': {'label': 'ResNet50', 'labeled_sizes': [], 'accuracies': []},
+            'resnet50': {'label': 'ResNet50', 'labeled_sizes': [], 'accuracies': []},
         },
-        # 'adam': {
-        #     'resnet18': {'label': 'ResNet18', 'labeled_sizes': [], 'accuracies': []},
-        #     'resnet34': {'label': 'ResNet34', 'labeled_sizes': [], 'accuracies': []},
-        #     'resnet50': {'label': 'ResNet50', 'labeled_sizes': [], 'accuracies': []},
-        # },
-        # 'adamw': {
-        #     'resnet18': {'label': 'ResNet18', 'labeled_sizes': [], 'accuracies': []},
-        #     'resnet34': {'label': 'ResNet34', 'labeled_sizes': [], 'accuracies': []},
-        #     'resnet50': {'label': 'ResNet50', 'labeled_sizes': [], 'accuracies': []},
-        # },
-        # 'rmsprop': {
-        #     'resnet18': {'label': 'ResNet18', 'labeled_sizes': [], 'accuracies': []},
-        #     'resnet34': {'label': 'ResNet34', 'labeled_sizes': [], 'accuracies': []},
-        #     'resnet50': {'label': 'ResNet50', 'labeled_sizes': [], 'accuracies': []},
-        # }
+        'adam': {
+            'resnet18': {'label': 'ResNet18', 'labeled_sizes': [], 'accuracies': []},
+            'resnet34': {'label': 'ResNet34', 'labeled_sizes': [], 'accuracies': []},
+            'resnet50': {'label': 'ResNet50', 'labeled_sizes': [], 'accuracies': []},
+        },
+        'adamw': {
+            'resnet18': {'label': 'ResNet18', 'labeled_sizes': [], 'accuracies': []},
+            'resnet34': {'label': 'ResNet34', 'labeled_sizes': [], 'accuracies': []},
+            'resnet50': {'label': 'ResNet50', 'labeled_sizes': [], 'accuracies': []},
+        },
+        'rmsprop': {
+            'resnet18': {'label': 'ResNet18', 'labeled_sizes': [], 'accuracies': []},
+            'resnet34': {'label': 'ResNet34', 'labeled_sizes': [], 'accuracies': []},
+            'resnet50': {'label': 'ResNet50', 'labeled_sizes': [], 'accuracies': []},
+        }
     }
 
     OPTIMIZER_MAP = {
@@ -461,6 +461,7 @@ def generate_avg_accuracy(df, models, optimizers):
 
     return processed_data
 
+
 def plot_all_graph(models, optimizers, processed_data):
     for model in models:
         for optimizer_name in optimizers:
@@ -480,6 +481,7 @@ def plot_all_graph(models, optimizers, processed_data):
     plot_filename = os.path.join('plots', 'all_comparison.png')
     plt.savefig(plot_filename, dpi=300)
     plt.close()
+
 
 def format_data(data):
     reformatted_data_for_df = {}
@@ -501,7 +503,7 @@ def plot_accuracy_vs_labeled_size(file_path):
     except json.JSONDecodeError:
         print(f"Error: Failed to decode JSON from {file_path}.")
         return
-    
+
     df = format_data(data)
     models = ['resnet18', 'resnet34', 'resnet50']
     optimizers = ['sgd', 'adam', 'adamw', 'rmsprop']
@@ -537,18 +539,19 @@ if __name__ == '__main__':
     if not os.path.exists(base_save_path):
         os.makedirs(base_save_path)
         print(f"Created base results directory: {base_save_path}")
-
     # Create the dataset specific sub-directory (e.g., 'results/cifar10/')
     dataset_save_path = os.path.join(base_save_path, args.dataset)
     if not os.path.exists(dataset_save_path):
         os.makedirs(dataset_save_path)
         print(f"Created dataset results directory: {dataset_save_path}")
-
     # Set the final output filename path
     output_filename = os.path.join(dataset_save_path, 'results.json')
+
+    # Train the model to generate result and save model weight, training done
     # train_model(dataset, args, output_filename)
 
-    # test_model() #for future use
+    # to do: for future use, to generate results from trained models
+    # test_model()
 
-    # Plot the graph using the saved data
+    # Plot the graph using the results
     plot_accuracy_vs_labeled_size(output_filename)
