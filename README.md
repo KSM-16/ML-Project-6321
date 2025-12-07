@@ -3,15 +3,18 @@
 This repository implements an **active learning framework for image classification** using ResNet models on CIFAR datasets with different optimizers. The code includes functionality for uncertainty-based sampling, training, testing, and plotting performance metrics. This project has been completed as part of the course project requirement of **COMP 6321 - Machine Learning** for **Fall 2025** at Concordia University, Montreal, QC, Canada.
 
 ---
-c
+
 ## Table of Contents
 
 - [Folder Structure](#folder-structure)
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Usage](#usage)
-- [License](#license)
+- [Architecture](#architecture)
+- [Results](#results)
 - [Collaborators](#collaborators)
+- [License](#license)
+- [References](#references)
 
 ---
 
@@ -68,11 +71,18 @@ The project is compatible with **Python 3.8 or above**. Required Python packages
 ```bash
 git clone https://github.com/KSM-16/ML-Project-6321.git
 cd ML-Project-6321
+```
 
+2. **Create a Python virtual environment (recommended):**
+
+```bash
 python3 -m venv venv
 source venv/bin/activate       # Linux/Mac
 venv\Scripts\activate          # Windows
+```
 
+3. **Install dependencies:**
+```bash
 pip install --upgrade pip
 pip install -r requirements.txt
 ```
@@ -86,9 +96,15 @@ python main.py --dataset cifar10 --save_path results/ --num_trial 5 --cycles 10 
 
 ---
 
-## License
+## Architecture
+![Architecture](./architecture.jpg)
 
-This project is licensed under the [MIT License](LICENSE). See the LICENSE file for details.
+---
+
+## Results
+![ResNet18 Results](./plots/resnet18_comparison.png)
+![ResNet34 Results](./plots/resnet34_comparison.png)
+![ResNet50 Results](./plots/resnet50_comparison.png)
 
 ---
 
@@ -101,7 +117,35 @@ This project was developed by students of Concordia University, Montreal, QC, Ca
 - [**Sayed Abdullah Ali**](mailto:syedabdullah.ali@mail.concordia.ca)
 - [**Youssef Midra**](mailto:youssef.midra@mail.concordia.ca)
 
+---
 
+## License
+
+This project is licensed under the [MIT License](LICENSE). See the LICENSE file for details.
+
+---
+
+## References
+
+- D. Yoo and I. S. Kweon, “Learning Loss for Active Learning,” in Proceedings of the IEEE/CVF
+Conference on Computer Vision and Pattern Recognition (CVPR), 2019, pp. 93-102. [arXiv Link](http://arxiv.org/abs/1905.03677)
+
+### BibTeX Citation
+
+```bibtex
+@article{DBLP:journals/corr/abs-1905-03677,
+  author       = {Donggeun Yoo and In So Kweon},
+  title        = {Learning Loss for Active Learning},
+  journal      = {CoRR},
+  volume       = {abs/1905.03677},
+  year         = {2019},
+  url          = {http://arxiv.org/abs/1905.03677},
+  eprinttype   = {arXiv},
+  eprint       = {1905.03677},
+  biburl       = {https://dblp.org/rec/journals/corr/abs-1905-03677.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
+}
+```
 
 
 
